@@ -18,7 +18,7 @@ function item_has_viewer($item) {
   $query = $db->query("SELECT DISTINCT * FROM `{$db->prefix}three_js_viewers` WHERE item_id={$item->id}");
   $results = $query->fetchAll();
   if ($results) {
-    return $results;
+    return $results[0];
   } else {
     return NULL;
   }

@@ -1,0 +1,29 @@
+#three-viewer-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.three-options-fieldset {
+  display: flex;
+}
+
+.three-options-fieldset label {
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 5px;
+  margin: 10px 0px 10px 0px;
+}
+
+#three-viewer-form-submit {
+  align-self: center;
+  margin: 10px !important;
+}
+
+.three-form-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#three-viewer-form-delete {
+  margin: 10px !important;
+}
