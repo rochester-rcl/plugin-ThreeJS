@@ -68,6 +68,7 @@ function addThreeViewer(itemId, fileEndpoint, saveEndpoint, action){
         enable_lights: formData.lights,
         enable_shaders: formData.shaders,
         model_units: formData.units,
+        needs_delete: false,
       }
       request.send(JSON.stringify(viewerData));
     }
@@ -76,11 +77,11 @@ function addThreeViewer(itemId, fileEndpoint, saveEndpoint, action){
       event.preventDefault();
       event.stopPropagation();
       var request = new XMLHttpRequest();
-      request.open("DELETE", saveEndpoint);
+      request.open("PUT", saveEndpoint);
       request.onload = function() {
         showMessage(request);
       }
-      request.send();
+      request.send(JSON.stringify({ needs_delete: true }));
     }
 
     /*

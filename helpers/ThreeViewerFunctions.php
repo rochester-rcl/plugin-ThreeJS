@@ -23,3 +23,14 @@ function item_has_viewer($item) {
     return NULL;
   }
 }
+
+function file_has_viewer($file) {
+  $db = get_db();
+  $query = $db->query("SELECT DISTINCT * FROM `{$db->prefix}three_js_viewers` WHERE three_file_id={$file->id}");
+  $results = $query->fetchAll();
+  if ($results) {
+    return $results[0];
+  } else {
+    return NULL;
+  }
+}

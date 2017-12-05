@@ -25,6 +25,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
     'initialize',
     'define_acl',
     'admin_head',
+    'after_save_item',
   );
 
   protected $_filters = array(
@@ -108,6 +109,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       `enable_shaders` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       `enable_materials` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       `enable_lights` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
+      `needs_delete` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       PRIMARY KEY (`id`)
       ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
 
@@ -146,6 +148,18 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    {
      queue_js_file('three-plugin-admin', 'js/ThreeJSPlugin');
      queue_css_file('admin-style');
+   }
+
+   public function hookAfterSaveItem($args)
+   {
+      $item = $args['record'];
+      $viewer = item_has_viewer($item);
+       if ($viewer['needs_delete']) {
+         $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer['id']);
+         $fileRecord = get_record_by_id('File', $viewerRecord->three_file_id);
+         $viewerRecord->delete();
+         $fileRecord->delete();
+       }
    }
 
    public function filterAdminItemsFormTabs($tabs, $args)

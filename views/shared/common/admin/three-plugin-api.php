@@ -6,5 +6,5 @@
   $action = js_escape($this->action);
 ?>
 <script type="text/javascript">
-  addThreeViewer(<?=$itemId?>, <?=$fileEndpoint?>, <?=$saveEndpoint?>, <?=$fileDeleteEndpoint?>, <?=$action?>);
+  addThreeViewer(<?=$itemId?>, <?=$fileEndpoint?>, <?=$saveEndpoint?>, <?=$action?>);
 </script>

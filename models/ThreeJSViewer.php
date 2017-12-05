@@ -11,6 +11,7 @@ class ThreeJSViewer extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
   public $enable_materials;
   public $enable_lights;
   public $model_units;
+  public $needs_delete;
 
   public function getResourceId()
 {
