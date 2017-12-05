@@ -5,6 +5,17 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
     public function getRepresentation(Omeka_Record_AbstractRecord $record)
     {
         // Return a PHP array, representing the passed record.
+        $representation = array(
+          'item_id' => $record->item_id,
+          'three_file_id' => $record->three_file_id,
+          'background_url' => THREE_SKYBOX_URL . '/' . $record->background_url,
+          'enable_lights' => $record->enable_lights,
+          'enable_materials' => $record->enable_materials,
+          'enable_shaders' => $record->enable_shaders,
+          'enable_measurement' => $record->enable_measurement,
+          'model_units' => $record->model_units,
+        );
+        return $representation;
     }
 
     // Set data to a record during a POST request.

@@ -15,7 +15,8 @@
 require_once dirname(__FILE__) . '/helpers/ThreeViewerFunctions.php';
 $appRoot = getcwd();
 define('THREE_VIEWER_ROOT', dirname(__FILE__));
-define('THREE_SKYBOX_DIR', dirname(__FILE__) . '/views/shared/skyboxes');
+define('THREE_SKYBOX_DIR', dirname(__FILE__) . '/../../files/skyboxes');
+define('THREE_SKYBOX_URL', absolute_url(public_url('/views/shared/skyboxes')));
 
 class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -26,14 +27,13 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
     'define_acl',
     'admin_head',
     'after_save_item',
+    'before_delete_item',
   );
 
   protected $_filters = array(
     'admin_items_form_tabs',
     'api_resources',
   );
-
-  //protected $_skyboxes = scandir(THREE_SKYBOX_DIR);
 
   protected $_formOptions = array(
     'fileOptions' => array (
@@ -114,9 +114,10 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
 
       $db->query($initViewers);
-
+      if (!file_exists(THREE_SKYBOX_DIR)) {
+        mkdir(THREE_SKYBOX_DIR, 0755);
+      }
       $this->_installOptions();
-      $this->_formOptions['viewerOptions']['skybox']['options'] = scandir(THREE_SKYBOX_DIR);
    }
 
    public function hookUninstall()
@@ -134,6 +135,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    {
        add_translation_source(dirname(__FILE__) . '/languages');
        get_view()->addHelperPath(dirname(__FILE__) . '/views/helpers', 'ThreeJS_View_Helper');
+       $this->_formOptions['viewerOptions']['skybox']['options'] = scandir(THREE_SKYBOX_DIR);
    }
 
    public function hookDefineAcl($args)
@@ -154,12 +156,22 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    {
       $item = $args['record'];
       $viewer = item_has_viewer($item);
-       if ($viewer['needs_delete']) {
-         $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer['id']);
-         $fileRecord = get_record_by_id('File', $viewerRecord->three_file_id);
-         $viewerRecord->delete();
-         $fileRecord->delete();
-       }
+      if ($viewer['needs_delete']) {
+        $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer['id']);
+        $fileRecord = get_record_by_id('File', $viewerRecord->three_file_id);
+        $viewerRecord->delete();
+        $fileRecord->delete();
+      }
+   }
+
+   public function hookBeforeDeleteItem($args)
+   {
+     $item = $args['record'];
+     $viewer = item_has_viewer($item);
+     if ($viewer) {
+       $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer['id']);
+       $viewerRecord->delete();
+     }
    }
 
    public function filterAdminItemsFormTabs($tabs, $args)
