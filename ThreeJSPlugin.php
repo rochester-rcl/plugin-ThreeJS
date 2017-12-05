@@ -81,7 +81,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
         'type' => 'select',
         'id' => 'three-skybox-input',
         'model_prop' => 'skybox_id',
-        'options' => array(),
+        'options' => array(array('value' => -1, 'label' => 'None')),
         'value' => NULL,
       ),
       'units' => array(
@@ -187,7 +187,8 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 
    public function filterAdminItemsFormTabs($tabs, $args)
    {
-     $this->_formOptions['viewerOptions']['skybox']['options'] = get_skybox_options($this->_getSkyboxItemTypeId());
+     $skyboxOptions = $this->_formOptions['viewerOptions']['skybox']['options'];
+     $this->_formOptions['viewerOptions']['skybox']['options'] = array_merge($skyboxOptions, get_skybox_options($this->_getSkyboxItemTypeId()));
      $item = $args['item'];
      if ($item->added) {
        $viewer = item_has_viewer($item);

@@ -4,11 +4,23 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
     // Get the REST representation of a record.
     public function getRepresentation(Omeka_Record_AbstractRecord $record)
     {
+        $skybox = NULL;
+        if ($record->skybox_id !== -1) {
+          $skyboxRecord = get_record_by_id('Item', $record->skybox_id);
+          $files = $skyboxRecord->getFiles();
+          if (sizeof($files) > 0) {
+            $skybox = $files[0]->getWebPath('original');
+          }
+        }
+
+        $threeFileRecord = get_record_by_id('File', $record->three_file_id);
+        $threeFile = $threeFileRecord->getWebPath('original');
+
         // Return a PHP array, representing the passed record.
         $representation = array(
           'item_id' => $record->item_id,
-          'three_file_id' => $record->three_file_id,
-          'skybox_id' => $record->skybox_id,
+          'three_file' => $threeFile,
+          'skybox' => $skybox,
           'enable_lights' => $record->enable_lights,
           'enable_materials' => $record->enable_materials,
           'enable_shaders' => $record->enable_shaders,
