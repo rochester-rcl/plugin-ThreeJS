@@ -34,3 +34,15 @@ function file_has_viewer($file) {
     return NULL;
   }
 }
+
+function get_skybox_options($itemTypeId) {
+  $db = get_db();
+  $query = $db->query("SELECT DISTINCT * FROM `{$db->prefix}items` WHERE item_type_id={$itemTypeId}");
+  $results = $query->fetchAll();
+  return array_map(function($result) {
+    $record = get_record_by_id('Item', $result['id']);
+    $files = $record->getFiles();
+    return array('value' => $record->id, 'label' => $files[0]->original_filename);
+  }, $results);
+
+}

@@ -29,10 +29,10 @@
               <select class="three-form-input" id=<?=$viewerOption['id']?> type="select" name=<?=$key?>>
                 <?php foreach($viewerOption['options'] as $option): ?>
                   <option
-                    value=<?=$option?>
+                    value=<?=$option['value']?>
                     <?=($viewerOption['value'] === $option ? 'selected' : '')?>
                     >
-                    <?=$option?>
+                    <?=$option['label']?>
                   </option>
                 <?php endforeach; ?>
               </select>

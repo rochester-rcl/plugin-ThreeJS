@@ -62,7 +62,7 @@ function addThreeViewer(itemId, fileEndpoint, saveEndpoint, action){
       var viewerData = {
         item_id: itemId,
         three_file_id: currentFile.id ? currentFile.id : null,
-        background_url: formData.skybox,
+        skybox_id: formData.skybox,
         enable_measurement: formData.measurement,
         enable_materials: formData.materials,
         enable_lights: formData.lights,

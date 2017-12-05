@@ -8,7 +8,7 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
         $representation = array(
           'item_id' => $record->item_id,
           'three_file_id' => $record->three_file_id,
-          'background_url' => THREE_SKYBOX_URL . '/' . $record->background_url,
+          'skybox_id' => $record->skybox_id,
           'enable_lights' => $record->enable_lights,
           'enable_materials' => $record->enable_materials,
           'enable_shaders' => $record->enable_shaders,
@@ -24,7 +24,7 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
         // Set properties directly to a new record.
         $record->item_id = $data->item_id;
         $record->three_file_id = $data->three_file_id;
-        $record->background_url = $data->background_url;
+        $record->skybox_id = $data->skybox_id;
         $record->enable_lights = $data->enable_lights;
         $record->enable_materials = $data->enable_materials;
         $record->enable_shaders = $data->enable_shaders;
@@ -47,7 +47,7 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
             $current->delete();
           }
           $record->item_id = $data->item_id;
-          $record->background_url = $data->background_url;
+          $record->skybox_id = $data->skybox_id;
           $record->enable_lights = $data->enable_lights;
           $record->enable_materials = $data->enable_materials;
           $record->enable_shaders = $data->enable_shaders;

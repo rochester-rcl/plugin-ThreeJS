@@ -80,7 +80,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
         'label' => 'Select Skybox',
         'type' => 'select',
         'id' => 'three-skybox-input',
-        'model_prop' => 'background_url',
+        'model_prop' => 'skybox_id',
         'options' => array(),
         'value' => NULL,
       ),
@@ -89,7 +89,20 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
         'type' => 'select',
         'id' => 'three-units-input',
         'model_prop' => 'model_units',
-        'options' => array('mm','cm','in'),
+        'options' => array(
+          array(
+            'value' => 'mm',
+            'label' => 'mm',
+          ),
+          array(
+            'value' => 'cm',
+            'label' => 'cm',
+          ),
+          array(
+            'value' => 'in',
+            'label' => 'in',
+          )
+        ),
         'value' => NULL,
       )
     )
@@ -101,10 +114,10 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       $initViewers = "
       CREATE TABLE IF NOT EXISTS `{$db->prefix}three_js_viewers` (
       `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-      `item_id` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-      `three_file_id` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
+      `item_id` int(20) COLLATE utf8_unicode_ci NOT NULL,
+      `three_file_id` int(20) COLLATE utf8_unicode_ci NOT NULL,
       `model_units` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-      `background_url` varchar(500) COLLATE utf8_unicode_ci,
+      `skybox_id` int(20) COLLATE utf8_unicode_ci,
       `enable_measurement` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       `enable_shaders` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       `enable_materials` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
@@ -114,10 +127,9 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
 
       $db->query($initViewers);
-      if (!file_exists(THREE_SKYBOX_DIR)) {
-        mkdir(THREE_SKYBOX_DIR, 0755);
-      }
       $this->_installOptions();
+      $this->_createSkyboxType();
+
    }
 
    public function hookUninstall()
@@ -127,7 +139,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
        $dropViewers = "DROP TABLE IF EXISTS `{$db->prefix}three_js_viewers`";
 
        $db->query($dropViewers);
-
+       $this->_deleteSkyboxType();
        $this->_uninstallOptions();
    }
 
@@ -135,7 +147,6 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    {
        add_translation_source(dirname(__FILE__) . '/languages');
        get_view()->addHelperPath(dirname(__FILE__) . '/views/helpers', 'ThreeJS_View_Helper');
-       $this->_formOptions['viewerOptions']['skybox']['options'] = scandir(THREE_SKYBOX_DIR);
    }
 
    public function hookDefineAcl($args)
@@ -176,6 +187,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 
    public function filterAdminItemsFormTabs($tabs, $args)
    {
+     $this->_formOptions['viewerOptions']['skybox']['options'] = get_skybox_options($this->_getSkyboxItemTypeId());
      $item = $args['item'];
      if ($item->added) {
        $viewer = item_has_viewer($item);
@@ -238,6 +250,33 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
         $form = new EditThreeViewerForm($item, get_view(), $options);
         return $form->render();
       }
+   }
+
+   protected function _createSkyboxType()
+   {
+     $skyboxType = new ItemType();
+     $skyboxType->name = 'Skybox';
+     $skyboxType->description = 'An item type to be used specifically with the ThreeJS Plugin.
+       By assigning an item this type, you will be able to use equirectangular images as 360 panoramic
+       backgrounds for your viewers. If you choose not to attach an image, you can add rgb values for
+       a linear gradient skybox. Currently only works with a single equirectangular (spherical) image.';
+     $skyboxType->save();
+   }
+
+   protected function _deleteSkyboxType()
+   {
+     $skyboxType = get_record_by_id('ItemType', $this->_getSkyboxItemTypeId());
+     $skyboxType->delete();
+   }
+
+   protected function _getSkyboxItemTypeId()
+   {
+     $db = get_db();
+     $query = $db->query("SELECT DISTINCT id FROM `{$db->prefix}item_types` WHERE name='Skybox'");
+     $results = $query->fetchAll();
+     if ($results) {
+       return $results[0]['id'];
+     }
    }
 
 }
