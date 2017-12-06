@@ -13,7 +13,7 @@ class ThreeJSViewer extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
   public $model_units;
   public $needs_delete;
 
-  public function getResourceId()
+public function getResourceId()
 {
     // This is typically the name of the plugin, an underscore, and the pluralized record type.
     return 'ThreeJS_Viewers';

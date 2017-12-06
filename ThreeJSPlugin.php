@@ -154,6 +154,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       $acl = $args['acl']; // get the Zend_Acl
 
       $acl->addResource('ThreeJS_Viewers');
+      $acl->allow(null, 'ThreeJS_Viewers', 'show');
 
    }
 
@@ -208,8 +209,8 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
      $apiResources['threejs_viewers'] = array(
        'record_type' => 'ThreeJSViewer',
        'actions' => array(
-         'index',
          'get',
+         'index',
          'post',
          'put',
          'delete'

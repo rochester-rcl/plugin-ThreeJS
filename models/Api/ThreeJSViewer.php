@@ -28,7 +28,6 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
 
     public function getRepresentation(Omeka_Record_AbstractRecord $record)
     {
-
         if ($record->skybox_id !== -1) {
           try {
             $skybox = array('file' => $this->_loadSkybox($record->skybox_id));
@@ -47,7 +46,8 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
 
         // Return a PHP array, representing the passed record.
         $representation = array(
-          'item_id' => $record->item_id,
+          'id' => $record->id,
+          'item_url' => absolute_url(public_url('api/items/' . $record->item_id)),
           'three_file' => $threeFile,
           'skybox' => $skybox,
           'enable_lights' => $record->enable_lights,
