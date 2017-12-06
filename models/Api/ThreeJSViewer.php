@@ -2,19 +2,48 @@
 class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
 {
     // Get the REST representation of a record.
+    protected function _loadSkybox($skyboxId) {
+      $skyboxRecord = get_record_by_id('Item', $skyboxId);
+      if ($skyboxRecord) {
+        $files = $skyboxRecord->getFiles();
+        if (sizeof($files) > 0) {
+          $skybox = $files[0]->getWebPath('original');
+          return $skybox;
+        } else {
+          throw new Exception('Skybox Record has no associated files!');
+        }
+      } else {
+        throw new Exception('Skybox record is not public! To fix this, you can make item ' . $skyboxId . ' public');
+      }
+    }
+
+    protected function _loadThreeFile($threeFileId, $itemId) {
+      $threeFileRecord = get_record_by_id('File', $threeFileId);
+      if ($threeFileRecord) {
+        return $threeFileRecord->getWebPath('original');
+      } else {
+        throw new Exception('Three file record parent item is not public! To fix this, you can make item ' . $itemId . ' public.');
+      }
+    }
+
     public function getRepresentation(Omeka_Record_AbstractRecord $record)
     {
-        $skybox = NULL;
+
         if ($record->skybox_id !== -1) {
-          $skyboxRecord = get_record_by_id('Item', $record->skybox_id);
-          $files = $skyboxRecord->getFiles();
-          if (sizeof($files) > 0) {
-            $skybox = $files[0]->getWebPath('original');
+          try {
+            $skybox = array('file' => $this->_loadSkybox($record->skybox_id));
+          } catch (Exception $error) {
+            $skybox = array('error' => $error->getMessage(), 'status' => 500);
           }
+        } else {
+          $skybox = array('file' => null);
         }
 
-        $threeFileRecord = get_record_by_id('File', $record->three_file_id);
-        $threeFile = $threeFileRecord->getWebPath('original');
+        try {
+          $threeFile = $this->_loadThreeFile($record->three_file_id, $record->item_id);
+        } catch (Exception $error) {
+          $threeFile = array('error' => $error->getMessage(), 'status' => 500);
+        }
 
         // Return a PHP array, representing the passed record.
         $representation = array(

@@ -30,7 +30,7 @@
                 <?php foreach($viewerOption['options'] as $option): ?>
                   <option
                     value=<?=$option['value']?>
-                    <?=($viewerOption['value'] === $option ? 'selected' : '')?>
+                    <?=($viewerOption['value'] === $option['value'] ? 'selected' : '')?>
                     >
                     <?=$option['label']?>
                   </option>
