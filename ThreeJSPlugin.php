@@ -30,9 +30,20 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
     'before_delete_item',
   );
 
+  protected $_addedMimeTypes = array(
+    'application/json',
+    'application/javascript',
+  );
+
+  protected $_addedFileExtensions = array(
+    'json',
+    'js'
+  );
+
   protected $_filters = array(
     'admin_items_form_tabs',
     'api_resources',
+    'file_ingest_validators',
   );
 
   protected $_formOptions = array(
@@ -217,6 +228,22 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
        ),
      );
      return $apiResources;
+   }
+
+   public function filterFileIngestValidators($validators)
+   {
+     // Keeps all the old validators and allows for JS / JSON to be uploaded
+     $defaultExtensionWhitelist = Omeka_Validate_File_Extension::DEFAULT_WHITELIST;
+     $defaultMimeTypeWhitelist = Omeka_Validate_File_MimeType::DEFAULT_WHITELIST;
+     $defaultExtensionWhitelist .= implode(',', $this->_addedFileExtensions);
+     $defaultMimeTypeWhitelist .= implode(',', $this->_addedMimeTypes);
+
+     unset($validators['MIME type whitelist']);
+     unset($validators['extension whitelist']);
+     $validators['ThreeJSPlugin_MimeType_Validators'] = new Omeka_Validate_File_MimeType($defaultMimeTypeWhitelist);
+     $validators['ThreeJSPlugin_Extension_Validators'] = new Omeka_Validate_File_Extension($defaultExtensionWhitelist);
+
+     return $validators;
    }
 
    protected function hydrateOptions($viewer)

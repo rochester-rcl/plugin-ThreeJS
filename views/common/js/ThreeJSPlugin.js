@@ -3,7 +3,7 @@ function addThreeViewer(itemId, fileEndpoint, saveEndpoint, action){
     // AJAX related functions
     function sendFile(endpoint, formData, callback) {
       var fileRequest = new XMLHttpRequest();
-      fileRequest.onerror = function(error) { console.log(error) };
+      fileRequest.onerror = function(error) { console.log(error); console.log(fileRequest) };
       fileRequest.onload = function() {
         var res = JSON.parse(fileRequest.responseText);
         if (res) {
