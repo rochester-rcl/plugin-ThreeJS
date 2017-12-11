@@ -2,40 +2,42 @@ function addThreeViewer(itemId, fileEndpoint, saveEndpoint, action) {
   var ALLOWED_EXTENSIONS = ['js', 'json', 'gz', 'gzip'];
   // AJAX related functions
   function sendFile(endpoint, formData, callback) {
-
     var ext = formData.get('file')
-      .name
-      .split('.')
-      .pop();
-    if (ALLOWED_EXTENSIONS.indexOf(ext) !== -1) {
-      var fileRequest = new XMLHttpRequest();
-      fileRequest.onerror = function() {
-        showMessage(fileRequest)
-      };
-      fileRequest.onload = function() {
-        if (fileRequest.status === 500) {
-          showMessage(fileRequest);
-        } else {
-          var res = JSON.parse(fileRequest.responseText);
-          if (res) {
-            callback(res);
+    if (ext) {
+      ext = ext.name.split('.').pop();
+      if (ALLOWED_EXTENSIONS.indexOf(ext) !== -1) {
+        var fileRequest = new XMLHttpRequest();
+        fileRequest.onerror = function() {
+          showMessage(fileRequest)
+        };
+        fileRequest.onload = function() {
+          if (fileRequest.status === 500) {
+            showMessage(fileRequest);
+          } else {
+            var res = JSON.parse(fileRequest.responseText);
+            if (res) {
+              callback(res);
+            }
           }
         }
-      }
-      fileRequest.open("POST", endpoint);
-      if (formData.has('file')) {
-        fileRequest.send(formData);
+        fileRequest.open("POST", endpoint);
+        if (formData.has('file')) {
+          fileRequest.send(formData);
+        } else {
+          callback(res = {})
+        }
       } else {
-        callback(res = {})
+          showMessage({
+              status: 500,
+              responseText: '{"message": "File must be in THREE JSON Geometry format (.js, .json) \
+               or a GZipped version of the same (.gz, .gzip)"}'
+          });
       }
     } else {
-        showMessage({
-            status: 500,
-            responseText: '{"message": "File must be in THREE JSON Geometry format (.js, .json) \
-             or a GZipped version of the same (.gz, .gzip)"}'
-        });
-      }
+      callback(res = {});
     }
+  }
+
 
     function showMessage(request) {
       var form = document.getElementById('three-viewer-form');
