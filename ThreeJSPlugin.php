@@ -17,9 +17,17 @@ $appRoot = getcwd();
 define('THREE_VIEWER_ROOT', dirname(__FILE__));
 define('THREE_SKYBOX_DIR', dirname(__FILE__) . '/../../files/skyboxes');
 define('THREE_SKYBOX_URL', absolute_url(public_url('/views/shared/skyboxes')));
+define('SKYBOX_ITEM_TYPE_NAME', 'Skybox');
+define('SKYBOX_ELEMENT_INNER_GRADIENT', 'Skybox Radial Gradient Inner Color');
+define('SKYBOX_ELEMENT_OUTER_GRADIENT', 'Skybox Radial Gradient Outer Color');
+
 
 class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 {
+  protected $_SKYBOX_ITEM_TYPE_NAME = 'Skybox';
+  protected $_SKYBOX_ELEMENT_INNER_GRADIENT = 'Skybox Radial Gradient Inner Color';
+  protected $_SKYBOX_ELEMENT_OUTER_GRADIENT = 'Skybox Radial Gradient Outer Color';
+
   protected $_hooks = array(
     'install',
     'uninstall',
@@ -290,22 +298,69 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
        backgrounds for your viewers. If you choose not to attach an image, you can add rgb values for
        a linear gradient skybox. Currently only works with a single equirectangular (spherical) image.';
      $skyboxType->save();
+     $elementSet = $skyboxType->getItemTypeElementSet();
+     $radialGradientInner = new Element();
+     $radialGradientInner->name = "Skybox Radial Gradient Inner Color";
+     $radialGradientInner->description = "Either the hex value (#ffffff) or rgb value (rgb(255, 255, 255))
+      for the inner color of the skybox's radial gradient background.";
+     $radialGradientInner->element_set_id = $elementSet->id;
+     $radialGradientInner->save();
+
+     $radialGradientOuter = new Element();
+     $radialGradientOuter->name = "Skybox Radial Gradient Outer Color";
+     $radialGradientOuter->description = "Either the hex value (#ffffff) or rgb value (rgb(255, 255, 255))
+      for the outer color of the skybox's radial gradient background.";
+     $radialGradientOuter->element_set_id = $elementSet->id;
+     $radialGradientOuter->save();
+     $elementIds = $this->_getSkyboxElementIds();
+
+     $skyboxType->addElementById($elementIds['innerGradientId']);
+     $skyboxType->addElementById($elementIds['outerGradientId']);
+     $skyboxType->save();
    }
 
    protected function _deleteSkyboxType()
    {
      $skyboxType = get_record_by_id('ItemType', $this->_getSkyboxItemTypeId());
      $skyboxType->delete();
+     $elements = $this->_getSkyboxElementIds();
+     if (sizeof($elements) > 0) {
+       $inner = get_record_by_id('Element', $elements['innerGradientId']);
+       $inner->delete();
+       $outer = get_record_by_id('Element', $elements['outerGradientId']);
+       $outer->delete();
+     }
    }
 
    protected function _getSkyboxItemTypeId()
    {
      $db = get_db();
-     $query = $db->query("SELECT DISTINCT id FROM `{$db->prefix}item_types` WHERE name='Skybox'");
+     $query = $db->query("SELECT DISTINCT id FROM `{$db->prefix}item_types` WHERE name='{$this->_SKYBOX_ITEM_TYPE_NAME}'");
      $results = $query->fetchAll();
      if ($results) {
        return $results[0]['id'];
      }
+   }
+
+   protected function _getSkyboxElementIds()
+   {
+     $elements = [];
+     $db = get_db();
+     $inner = $db->query("SELECT id FROM `{$db->prefix}elements` WHERE name='{$this->_SKYBOX_ELEMENT_INNER_GRADIENT}'");
+     $results = $inner->fetchAll();
+     if (sizeof($results > 0)) {
+       $elements['innerGradientId'] = $results[0]['id'];
+     }
+
+     $outer = $db->query("SELECT id FROM `{$db->prefix}elements` WHERE name='{$this->_SKYBOX_ELEMENT_OUTER_GRADIENT}'");
+     $results = $outer->fetchAll();
+
+     if (sizeof($results > 0)) {
+       $elements['outerGradientId'] = $results[0]['id'];
+     }
+
+     return $elements;
+
    }
 
 }

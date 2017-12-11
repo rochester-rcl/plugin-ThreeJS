@@ -4,13 +4,22 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
     // Get the REST representation of a record.
     protected function _loadSkybox($skyboxId) {
       $skyboxRecord = get_record_by_id('Item', $skyboxId);
+      $skyboxInfo = array();
       if ($skyboxRecord) {
+        $skybox = array();
         $files = $skyboxRecord->getFiles();
+        $elements = item_type_elements($skyboxRecord);
         if (sizeof($files) > 0) {
-          $skybox = $files[0]->getWebPath('original');
-          return $skybox;
+          $skyboxInfo['file'] = $files[0]->getWebPath('original');
+        }
+        if (sizeof($elements) > 0) {
+          $skyboxInfo['gradient'] = array('innerColor' => $elements['Skybox Radial Gradient Inner Color'],
+          'outerColor' => $elements['Skybox Radial Gradient Outer Color']);
+        }
+        if (array_key_exists('file', $skyboxInfo) || array_key_exists('gradient', $skyboxInfo)) {
+          return $skyboxInfo;
         } else {
-          throw new Exception('Skybox Record has no associated files!');
+          throw new Exception('Skybox Record has no associated files and no gradient values - viewer will use the default background!');
         }
       } else {
         throw new Exception('Skybox record is not public! To fix this, you can make item ' . $skyboxId . ' public');
@@ -30,7 +39,7 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
     {
         if ($record->skybox_id !== -1) {
           try {
-            $skybox = array('file' => $this->_loadSkybox($record->skybox_id));
+            $skybox = $this->_loadSkybox($record->skybox_id);
           } catch (Exception $error) {
             $skybox = array('error' => $error->getMessage(), 'status' => 500);
           }
