@@ -15,12 +15,10 @@
 require_once dirname(__FILE__) . '/helpers/ThreeViewerFunctions.php';
 $appRoot = getcwd();
 define('THREE_VIEWER_ROOT', dirname(__FILE__));
-define('THREE_SKYBOX_DIR', dirname(__FILE__) . '/../../files/skyboxes');
-define('THREE_SKYBOX_URL', absolute_url(public_url('/views/shared/skyboxes')));
-define('SKYBOX_ITEM_TYPE_NAME', 'Skybox');
-define('SKYBOX_ELEMENT_INNER_GRADIENT', 'Skybox Radial Gradient Inner Color');
-define('SKYBOX_ELEMENT_OUTER_GRADIENT', 'Skybox Radial Gradient Outer Color');
-
+define('THREE_BUNDLE_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build');
+define('THREE_BUNDLE_STATIC_JS_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/js/');
+define('THREE_BUNDLE_STATIC_MEDIA_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/media/');
+define('THREE_BUNDLE_STATIC_CSS', 'js/ThreeJSPlugin/build/static/css');
 
 class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -32,9 +30,10 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
     'install',
     'uninstall',
     'initialize',
+    'define_routes',
     'define_acl',
     'admin_head',
-    'after_save_item',
+    'before_save_item',
     'before_delete_item',
   );
 
@@ -148,18 +147,18 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       $db->query($initViewers);
       $this->_installOptions();
       $this->_createSkyboxType();
+      $this->_patchMediaAssets();
 
    }
 
    public function hookUninstall()
    {
        // Drop the table.
-       $db = $this->_db;
-       $dropViewers = "DROP TABLE IF EXISTS `{$db->prefix}three_js_viewers`";
-
-       $db->query($dropViewers);
        $this->_deleteSkyboxType();
        $this->_uninstallOptions();
+       $db = $this->_db;
+       $dropViewers = "DROP TABLE IF EXISTS `{$db->prefix}three_js_viewers`";
+       $db->query($dropViewers);
    }
 
    public function hookInitialize()
@@ -177,32 +176,64 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 
    }
 
+   public function hookDefineRoutes($args)
+   {
+     $router = $args['router'];
+     $threeRoute = new Zend_Controller_Router_Route('three/*',
+      array('module' => 'three-js', 'controller' => 'three', 'action' => 'show')
+    );
+    $router->addRoute('three', $threeRoute);
+    return $router;
+   }
+
    public function hookAdminHead()
    {
      queue_js_file('three-plugin-admin', 'js/ThreeJSPlugin');
      queue_css_file('admin-style');
    }
 
-   public function hookAfterSaveItem($args)
+   public function hookBeforeSaveItem($args)
    {
-      $item = $args['record'];
-      $viewer = item_has_viewer($item);
-      if ($viewer['needs_delete']) {
-        $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer['id']);
-        $fileRecord = get_record_by_id('File', $viewerRecord->three_file_id);
-        $viewerRecord->delete();
-        $fileRecord->delete();
-      }
+     $item = $args['record'];
+     if ($item->id) {
+       $viewer = item_has_viewer($item);
+       if ($viewer) {
+         if ($viewer->needs_delete) {
+          $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer->id);
+          $fileRecord = get_record_by_id('File', $viewerRecord->three_file_id);
+          $viewerRecord->delete();
+          $toDelete = array($fileRecord->id);
+          if (array_key_exists('delete_files', $args['post'])) {
+            $args['post']['delete_files'] = array_merge($args['post']['delete_files'], $toDelete);
+          } else {
+            $args['post']['delete_files'] = $toDelete;
+          }
+         }
+         $toDelete = array();
+         foreach($item->getFiles() as $fileRecord) {
+           if ($fileRecord->getExtension() === 'js') {
+             if ($fileRecord->id !== $viewer->three_file_id) {
+               array_push($toDelete, $fileRecord->id);
+             }
+           }
+         }
+         if (array_key_exists('delete_files', $args['post'])) {
+           $args['post']['delete_files'] = array_merge($deleteArray, $toDelete);
+         } else {
+           $args['post']['delete_files'] = $toDelete;
+         }
+       }
+     }
    }
 
    public function hookBeforeDeleteItem($args)
    {
      $item = $args['record'];
-     $viewer = item_has_viewer($item);
-     if ($viewer) {
-       $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer['id']);
-       $viewerRecord->delete();
-     }
+      $viewer = item_has_viewer($item);
+      if ($viewer) {
+        $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer->id);
+        $viewerRecord->delete();
+      }
    }
 
    public function filterAdminItemsFormTabs($tabs, $args)
@@ -256,6 +287,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 
    protected function hydrateOptions($viewer)
    {
+     $viewer = (array) $viewer;
      $newOptions = $this->_formOptions;
      foreach($newOptions as $key => $group) {
        $newOptions[$key] = array_map(function($option) use (&$viewer) {
@@ -322,6 +354,14 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    protected function _deleteSkyboxType()
    {
      $skyboxType = get_record_by_id('ItemType', $this->_getSkyboxItemTypeId());
+     // Also need to delete all skyboxes
+     $db = get_db();
+     $res = $db->getTable('Item')->findBy(array('item_type_id' => $skyboxType->id));
+     if (sizeof($res) > 0) {
+       foreach($res as $skybox) {
+         $skybox->delete();
+       }
+     }
      $skyboxType->delete();
      $elements = $this->_getSkyboxElementIds();
      if (sizeof($elements) > 0) {
@@ -361,6 +401,15 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 
      return $elements;
 
+   }
+
+   protected function _patchMediaAssets()
+   {
+     // file must be writable by www-data
+     $css = load_react_css(TRUE);
+     $cssString = file_get_contents($css);
+     $res = str_replace('url(/static/media/', 'url(' . public_url(THREE_BUNDLE_STATIC_MEDIA_URL), $cssString);
+     file_put_contents($css, $res);
    }
 
 }

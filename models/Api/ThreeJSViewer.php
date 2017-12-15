@@ -94,7 +94,6 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
           if ($data->three_file_id) {
             $current = get_record_by_id('File', $record->three_file_id);
             $record->three_file_id = $data->three_file_id;
-            $current->delete();
           }
           $record->item_id = $data->item_id;
           $record->skybox_id = $data->skybox_id;
