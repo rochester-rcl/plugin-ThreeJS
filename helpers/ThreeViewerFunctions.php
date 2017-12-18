@@ -12,6 +12,11 @@ function get_user_api_key() {
   }
 }
 
+function checkExtension($ext) {
+  $extensions = array('js', 'gz', 'gzip', 'json');
+  return in_array($ext, $extensions);
+}
+
 function item_has_viewer($item)
 {
   $db = get_db();
@@ -21,6 +26,43 @@ function item_has_viewer($item)
   } else {
     return NULL;
   }
+}
+
+function viewer_items()
+{
+  $db = get_db();
+  // this will work for now but we probably need to do something more sophisticated
+  $viewers = $db->getTable('ThreeJSViewer')->findAll();
+  if (sizeof($viewers) > 0) {
+    return array_map(function($viewer) {
+      // must have an item id
+      $item = get_record_by_id('Item', $viewer->item_id);
+      $item->_viewer_id = $viewer->id;
+      return $item;
+    }, $viewers);
+  } else {
+    return NULL;
+  }
+}
+
+function three_lazy_load_image($format, $item)
+{
+  $files = $item->getFiles();
+  foreach($files as $file) {
+    $ext = checkExtension($file->getExtension());
+    if (!$ext) {
+      $thumbnail = $file->getWebPath($format);
+      break;
+    }
+  }
+
+  if (!isset($thumbnail)) {
+    $thumbnail = url('/application/views/scripts/images/fallback-file.png');
+  }
+  
+  $thumbnailConstraint = get_option('square_thumbnail_constraint');
+  $markup = '<img class="pre-loading" data-original="' . $thumbnail . '" width="' . $thumbnailConstraint . '" height="' . $thumbnailConstraint . '"/>';
+  return $markup;
 }
 
 function file_has_viewer($file)

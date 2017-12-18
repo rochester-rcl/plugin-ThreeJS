@@ -30,6 +30,9 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
     'install',
     'uninstall',
     'initialize',
+    'config_form',
+    'config',
+    'items_browse_sql',
     'define_routes',
     'define_acl',
     'admin_head',
@@ -155,6 +158,8 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    {
        // Drop the table.
        $this->_deleteSkyboxType();
+       $this->_removeViewerElementFromItems();
+       $this->_deleteViewerElement();
        $this->_uninstallOptions();
        $db = $this->_db;
        $dropViewers = "DROP TABLE IF EXISTS `{$db->prefix}three_js_viewers`";
@@ -182,7 +187,11 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
      $threeRoute = new Zend_Controller_Router_Route('three/*',
       array('module' => 'three-js', 'controller' => 'three', 'action' => 'show')
     );
+    $threeBrowseRoute = new Zend_Controller_Router_Route('three-browse',
+      array('module' => 'three-js', 'controller' => 'three', 'action' => 'browse')
+    );
     $router->addRoute('three', $threeRoute);
+    $router->addRoute('three-browse', $threeBrowseRoute);
     return $router;
    }
 
@@ -190,6 +199,30 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    {
      queue_js_file('three-plugin-admin', 'js/ThreeJSPlugin');
      queue_css_file('admin-style');
+   }
+
+   public function hookConfigForm()
+   {
+     echo get_view()->partial('plugin/threejs-config-form.php');
+   }
+
+   public function hookConfig()
+   {
+     if ($_POST['threejs_patch_media']) {
+       $this->_patchMediaAssets();
+     }
+   }
+
+   public function hookItemsBrowseSql($args)
+   {
+     $params = $args['params'];
+     if (!is_admin_theme()) {
+       // filter skyboxes out from all searching and browsing on the public side
+       $select = $args['select'];
+       $db = get_db();
+       $skyboxTypeId = $this->_getSkyboxItemTypeId();
+       $select->where("item_type_id != ? OR item_type_id IS NULL", $skyboxTypeId);
+     }
    }
 
    public function hookBeforeSaveItem($args)
@@ -332,14 +365,14 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
      $skyboxType->save();
      $elementSet = $skyboxType->getItemTypeElementSet();
      $radialGradientInner = new Element();
-     $radialGradientInner->name = "Skybox Radial Gradient Inner Color";
+     $radialGradientInner->name = $this->_SKYBOX_ELEMENT_INNER_GRADIENT;
      $radialGradientInner->description = "Either the hex value (#ffffff) or rgb value (rgb(255, 255, 255))
       for the inner color of the skybox's radial gradient background.";
      $radialGradientInner->element_set_id = $elementSet->id;
      $radialGradientInner->save();
 
      $radialGradientOuter = new Element();
-     $radialGradientOuter->name = "Skybox Radial Gradient Outer Color";
+     $radialGradientOuter->name = $this->_SKYBOX_ELEMENT_OUTER_GRADIENT;
      $radialGradientOuter->description = "Either the hex value (#ffffff) or rgb value (rgb(255, 255, 255))
       for the outer color of the skybox's radial gradient background.";
      $radialGradientOuter->element_set_id = $elementSet->id;
@@ -372,13 +405,19 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
      }
    }
 
+   protected function _removeViewerElementFromItems()
+   {
+     // TODO - this
+   }
+
    protected function _getSkyboxItemTypeId()
    {
      $db = get_db();
-     $query = $db->query("SELECT DISTINCT id FROM `{$db->prefix}item_types` WHERE name='{$this->_SKYBOX_ITEM_TYPE_NAME}'");
-     $results = $query->fetchAll();
-     if ($results) {
-       return $results[0]['id'];
+     $skyboxItemType = $db->getTable('ItemType')->findByName($this->_SKYBOX_ITEM_TYPE_NAME);
+     if ($skyboxItemType) {
+       return $skyboxItemType->id;
+     } else {
+       return NULL;
      }
    }
 
@@ -386,21 +425,18 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    {
      $elements = [];
      $db = get_db();
-     $inner = $db->query("SELECT id FROM `{$db->prefix}elements` WHERE name='{$this->_SKYBOX_ELEMENT_INNER_GRADIENT}'");
-     $results = $inner->fetchAll();
-     if (sizeof($results > 0)) {
-       $elements['innerGradientId'] = $results[0]['id'];
+     $inner = $db->getTable('Element')->findByElementSetNameAndElementName('Item Type Metadata', $this->_SKYBOX_ELEMENT_INNER_GRADIENT);
+     $outer = $db->getTable('Element')->findByElementSetNameAndElementName('Item Type Metadata', $this->_SKYBOX_ELEMENT_OUTER_GRADIENT);
+
+     if ($inner) {
+       $elements['innerGradientId'] = $inner->id;
      }
 
-     $outer = $db->query("SELECT id FROM `{$db->prefix}elements` WHERE name='{$this->_SKYBOX_ELEMENT_OUTER_GRADIENT}'");
-     $results = $outer->fetchAll();
-
-     if (sizeof($results > 0)) {
-       $elements['outerGradientId'] = $results[0]['id'];
+     if ($outer) {
+       $elements['outerGradientId'] = $outer->id;
      }
 
      return $elements;
-
    }
 
    protected function _patchMediaAssets()
