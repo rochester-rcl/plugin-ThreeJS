@@ -23,3 +23,4 @@
   }
 </script>
 <script type="text/javascript" src=<?=load_js_bundle()?>></script>
+<?php echo foot(); ?>

@@ -17,6 +17,7 @@ $appRoot = getcwd();
 define('THREE_VIEWER_ROOT', dirname(__FILE__));
 define('THREE_BUNDLE_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build');
 define('THREE_BUNDLE_STATIC_JS_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/js/');
+define('THREE_FALLBACK_IMG_URL', 'plugins/' . basename(__DIR__) . '/views/shared/common/images/fallback.png');
 define('THREE_BUNDLE_STATIC_MEDIA_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/media/');
 define('THREE_BUNDLE_STATIC_CSS', 'js/ThreeJSPlugin/build/static/css');
 
@@ -156,10 +157,8 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 
    public function hookUninstall()
    {
-       // Drop the table.
+       $this->_removeThreeFiles();
        $this->_deleteSkyboxType();
-       $this->_removeViewerElementFromItems();
-       $this->_deleteViewerElement();
        $this->_uninstallOptions();
        $db = $this->_db;
        $dropViewers = "DROP TABLE IF EXISTS `{$db->prefix}three_js_viewers`";
@@ -241,32 +240,35 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
           } else {
             $args['post']['delete_files'] = $toDelete;
           }
-         }
-         $toDelete = array();
-         foreach($item->getFiles() as $fileRecord) {
-           if ($fileRecord->getExtension() === 'js') {
-             if ($fileRecord->id !== $viewer->three_file_id) {
-               array_push($toDelete, $fileRecord->id);
-             }
-           }
-         }
-         if (array_key_exists('delete_files', $args['post'])) {
-           $args['post']['delete_files'] = array_merge($deleteArray, $toDelete);
-         } else {
-           $args['post']['delete_files'] = $toDelete;
-         }
-       }
-     }
+        } else {
+          // Need to check here, the files arent getting added to the array
+          $toDelete = array();
+          foreach($item->getFiles() as $fileRecord) {
+            if ($fileRecord->getExtension() === 'js') {
+              if ($fileRecord->id !== $viewer->three_file_id) {
+                array_push($toDelete, $fileRecord->id);
+              }
+            }
+          }
+          if (array_key_exists('delete_files', $args['post'])) {
+            $deleteArray = $args['post']['delete_files'];
+            $args['post']['delete_files'] = array_merge($deleteArray, $toDelete);
+          } else {
+            $args['post']['delete_files'] = $toDelete;
+          }
+        }
+      }
+    }
    }
 
    public function hookBeforeDeleteItem($args)
    {
      $item = $args['record'];
-      $viewer = item_has_viewer($item);
-      if ($viewer) {
-        $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer->id);
-        $viewerRecord->delete();
-      }
+     $viewer = item_has_viewer($item);
+     if ($viewer) {
+      $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer->id);
+      $viewerRecord->delete();
+    }
    }
 
    public function filterAdminItemsFormTabs($tabs, $args)
@@ -405,9 +407,18 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
      }
    }
 
-   protected function _removeViewerElementFromItems()
+   protected function _removeThreeFiles()
    {
-     // TODO - this
+     $items = viewer_items();
+     foreach($items as $item) {
+       $files = $item->getFiles();
+       foreach($files as $file) {
+         $ext = checkExtension($file->getExtension());
+         if ($ext) {
+           $file->delete();
+         }
+       }
+     }
    }
 
    protected function _getSkyboxItemTypeId()

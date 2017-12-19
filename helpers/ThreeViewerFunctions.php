@@ -57,9 +57,9 @@ function three_lazy_load_image($format, $item)
   }
 
   if (!isset($thumbnail)) {
-    $thumbnail = url('/application/views/scripts/images/fallback-file.png');
+    $thumbnail = url(THREE_FALLBACK_IMG_URL);
   }
-  
+
   $thumbnailConstraint = get_option('square_thumbnail_constraint');
   $markup = '<img class="pre-loading" data-original="' . $thumbnail . '" width="' . $thumbnailConstraint . '" height="' . $thumbnailConstraint . '"/>';
   return $markup;

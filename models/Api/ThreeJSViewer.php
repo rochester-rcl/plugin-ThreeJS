@@ -57,6 +57,8 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
         $representation = array(
           'id' => $record->id,
           'item_url' => absolute_url('api/items/' . $record->item_id),
+          'item_id' => $record->item_id,
+          'item_show_url' => absolute_url('items/show/' . $record->item_id),
           'three_file' => $threeFile,
           'skybox' => $skybox,
           'enable_lights' => $record->enable_lights,

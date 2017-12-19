@@ -19,7 +19,7 @@ echo $this->partial('common/header-three.php', array('pageTitle' => 'browse'));
     <?php endif; ?>
 </nav>
 <h1 class="item-type-title">
-  <?php echo $pageTitle;?>
+  <?php echo $pageTitle . ' (' . $total_results . ')'; ?>
 </h1>
 
 <div class="item-records" id="item-records-block">
