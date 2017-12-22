@@ -244,7 +244,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
           // Need to check here, the files arent getting added to the array
           $toDelete = array();
           foreach($item->getFiles() as $fileRecord) {
-            if ($fileRecord->getExtension() === 'js') {
+            if (checkExtension($fileRecord->getExtension())) {
               if ($fileRecord->id !== $viewer->three_file_id) {
                 array_push($toDelete, $fileRecord->id);
               }
