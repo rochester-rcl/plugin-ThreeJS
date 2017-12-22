@@ -5,7 +5,7 @@
   may need to clear your cache in order to see if the changes took.
   <br />
   <br />
-  <i>The files in the directory ThreeJS/views/public/build/static/css must be writable by Omeka.</i>
+  <i>The files in the directory ThreeJS/views/public/shared/js/ThreeJSPlugin/build/static/css must be writable by Omeka.</i>
 </div>
 <br />
 
