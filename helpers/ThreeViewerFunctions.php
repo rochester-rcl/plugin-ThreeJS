@@ -130,7 +130,7 @@ function load_js_bundle()
       $file = $dir;
       $ext = $file->getExtension();
       if ($ext === 'js') {
-        return absolute_url(THREE_BUNDLE_STATIC_JS_URL . $file->getBasename('.js'));
+        return absolute_url(THREE_BUNDLE_STATIC_JS_URL . $file->getBasename());
       }
     }
   }
