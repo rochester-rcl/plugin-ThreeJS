@@ -307,13 +307,17 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    public function filterFileIngestValidators($validators)
    {
      // Keeps all the old validators and allows for JS / JSON to be uploaded
-     $defaultExtensionWhitelist = Omeka_Validate_File_Extension::DEFAULT_WHITELIST;
-     $defaultMimeTypeWhitelist = Omeka_Validate_File_MimeType::DEFAULT_WHITELIST;
+
+     $defaultExtensionWhitelist = get_option('file_extension_whitelist');
+     $defaultMimeTypeWhitelist = get_option('file_mime_type_whitelist');
+     $defaultMimeTypeWhitelist .= ',';
+     $defaultExtensionWhitelist .= ',';
      $defaultExtensionWhitelist .= implode(',', $this->_addedFileExtensions);
      $defaultMimeTypeWhitelist .= implode(',', $this->_addedMimeTypes);
 
      unset($validators['MIME type whitelist']);
      unset($validators['extension whitelist']);
+
      $validators['ThreeJSPlugin_MimeType_Validators'] = new Omeka_Validate_File_MimeType($defaultMimeTypeWhitelist);
      $validators['ThreeJSPlugin_Extension_Validators'] = new Omeka_Validate_File_Extension($defaultExtensionWhitelist);
 
