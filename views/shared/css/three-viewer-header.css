@@ -93,6 +93,7 @@ body {
 	margin-top: 10px;
 	border-radius: 1px;
 	opacity: 0;
+	z-index: 10001;
 }
 
 #primary-nav-viewer .navigation li ul.fade-out {
