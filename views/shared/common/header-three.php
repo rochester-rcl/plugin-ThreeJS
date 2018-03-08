@@ -52,7 +52,10 @@
       <div class="viewer-nav-search">
         <?php
           if (get_theme_option('use_advanced_search') === null || get_theme_option('use_advanced_search')) {
-            echo search_form(array('show_advanced' => true));
+            $form = search_form();
+            $advanced_link = '<a alt="advanced search" class="viewer-nav-search-advanced-link" href="' . url('items/search') .
+              '"><i class="fa fa-ellipsis-h fa-lg"></i></a>';
+            echo $form .= $advanced_link;
           } else {
             echo search_form();
           }
