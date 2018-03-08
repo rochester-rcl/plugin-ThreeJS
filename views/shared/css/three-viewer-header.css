@@ -129,6 +129,7 @@ body {
 	background-color: rgba(33,33,31,0.9);
 	color: #fff;
 	padding: 5px;
+	font-family: inherit;
 }
 
 .viewer-nav-search #submit_search {
