@@ -33,13 +33,16 @@ function viewer_items()
   $db = get_db();
   // this will work for now but we probably need to do something more sophisticated
   $viewers = $db->getTable('ThreeJSViewer')->findAll();
+  $results = [];
   if (sizeof($viewers) > 0) {
-    return array_map(function($viewer) {
-      // must have an item id
+    foreach($viewers as $viewer) {
       $item = get_record_by_id('Item', $viewer->item_id);
-      $item->_viewer_id = $viewer->id;
-      return $item;
-    }, $viewers);
+      if ($item !== NULL) {
+        $item->_viewer_id = $viewer->id;
+        array_push($results, $item);
+      }
+    }
+    return $results;
   } else {
     return NULL;
   }
