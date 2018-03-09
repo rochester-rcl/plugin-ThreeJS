@@ -53,7 +53,7 @@
         <?php
           if (get_theme_option('use_advanced_search') === null || get_theme_option('use_advanced_search')) {
             $form = search_form();
-            $advanced_link = '<a alt="advanced search" class="viewer-nav-search-advanced-link" href="' . url('items/search') .
+            $advanced_link = '<a alt="advanced search" title="Advanced Search" class="viewer-nav-search-advanced-link" href="' . url('items/search') .
               '"><i class="fa fa-ellipsis-h fa-lg"></i></a>';
             echo $form .= $advanced_link;
           } else {
