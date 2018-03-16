@@ -123,6 +123,10 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
           array(
             'value' => 'in',
             'label' => 'in',
+          ),
+          array(
+            'value' => 'ft',
+            'label' => 'ft',
           )
         ),
         'value' => NULL,
