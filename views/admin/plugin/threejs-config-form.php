@@ -1,18 +1,8 @@
 <h2>Three JS Config Options</h2>
-<div class="field">
-  Check this box to run to attempt resolve media issues with the viewer (i.e. icons missing).
-  You should only run this if the files weren't patched when the plugin was installed. You
-  may need to clear your cache in order to see if the changes took.
-  <br />
-  <br />
-  <i>The files in the directory ThreeJS/views/public/shared/js/ThreeJSPlugin/build/static/css must be writable by Omeka.</i>
-</div>
 <br />
-
 <div class="field">
-    <div class="inputs two columns omega">
-        <label for="threejs_patch_media"><?php echo __('Patch media files'); ?></label>
-        <?php echo $this->formCheckbox('threejs_patch_media', null,
-        array('checked' => (bool) get_option('threejs_patch_media'))); ?>
+    <div class="inputs one columns omega">
+        <label for="threejs_browse_description"><?php echo __('Browse Template Description'); ?></label>
+        <?php echo $this->formTextarea('threejs_browse_description', get_option('threejs_browse_description')); ?>
     </div>
 </div>

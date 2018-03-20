@@ -211,9 +211,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 
    public function hookConfig()
    {
-     if ($_POST['threejs_patch_media']) {
-       $this->_patchMediaAssets();
-     }
+     set_option('threejs_browse_description', $_POST['threejs_browse_description']);
    }
 
    public function hookItemsBrowseSql($args)

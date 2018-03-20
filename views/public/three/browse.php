@@ -21,7 +21,9 @@ echo $this->partial('common/header-three.php', array('pageTitle' => 'browse'));
 <h1 class="item-type-title">
   <?php echo $pageTitle . ' (' . $total_results . ')'; ?>
 </h1>
-
+<div class="item-type-description">
+  <?php echo get_option('threejs_browse_description'); ?>
+</div>
 <div class="item-records" id="item-records-block">
 <?php foreach (loop('items') as $item): ?>
 <?php $itemTitle = metadata('item', array('Dublin Core', 'Title'));
