@@ -14,7 +14,7 @@ function addThreeViewer(itemId, fileEndpoint, saveEndpoint, action){
       fileRequest.send(formData);
     }
 
-    function saveViewer(endpoint, currentFile, formData) {
+    function saveViewer(endpoint, currentFile, thumbFile, formData) {
       var request = new XMLHttpRequest();
       if (action === "edit") {
         request.open("PUTS", endpoint);
@@ -28,6 +28,7 @@ function addThreeViewer(itemId, fileEndpoint, saveEndpoint, action){
       var viewerData = {
         item_id: itemId,
         three_file_id: currentFile.id,
+        three_thumbnail_id: thumbFile.id,
         background_url: formData.skybox,
         enable_measurement: formData.measurement,
         enable_materials: formData.materials,

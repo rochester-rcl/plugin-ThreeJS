@@ -48,24 +48,27 @@ function viewer_items()
   }
 }
 
-function three_lazy_load_image($format, $item)
+function get_viewer($viewerId)
 {
-  $files = $item->getFiles();
-  foreach($files as $file) {
-    $ext = checkExtension($file->getExtension());
-    if (!$ext) {
-      $thumbnail = $file->getWebPath($format);
-      break;
+  return get_record_by_id('ThreeJSViewer', $viewerId);
+}
+
+function three_lazy_load_image($format, $viewerId)
+{
+  $viewer = get_viewer($viewerId);
+  if ($viewer) {
+    $thumbFile = get_record_by_id('File', $viewer->three_thumbnail_id);
+    $thumbnail = NULL;
+    if ($thumbFile) {
+      $thumbnail = $thumbFile->getWebPath($format);
     }
+    if (!isset($thumbnail)) {
+      $thumbnail = url(THREE_FALLBACK_IMG_URL);
+    }
+    $thumbnailConstraint = get_option('square_thumbnail_constraint');
+    $markup = '<img class="pre-loading" data-original="' . $thumbnail . '" width="' . $thumbnailConstraint . '" height="' . $thumbnailConstraint . '"/>';
+    return $markup;
   }
-
-  if (!isset($thumbnail)) {
-    $thumbnail = url(THREE_FALLBACK_IMG_URL);
-  }
-
-  $thumbnailConstraint = get_option('square_thumbnail_constraint');
-  $markup = '<img class="pre-loading" data-original="' . $thumbnail . '" width="' . $thumbnailConstraint . '" height="' . $thumbnailConstraint . '"/>';
-  return $markup;
 }
 
 function file_has_viewer($file)

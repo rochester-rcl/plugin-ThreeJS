@@ -39,6 +39,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
     'admin_head',
     'before_save_item',
     'before_delete_item',
+    'upgrade',
   );
 
   protected $_addedMimeTypes = array(
@@ -58,12 +59,21 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
   );
 
   protected $_formOptions = array(
-    'fileOptions' => array (
+    'fileOptions' => array(
       'three-file-input' => array(
         'label' => 'Upload a file in ThreeJS format',
         'type' => 'file',
         'id' => 'three-file-input',
         'model_prop' => 'three_file_id',
+        'value' => NULL,
+      ),
+    ),
+    'imageUploadOptions' => array(
+      'three-image-input' => array(
+        'label' => 'Upload a thumbnail',
+        'type' => 'file',
+        'id' => 'three-image-input',
+        'model_prop' => 'three_thumbnail_id',
         'value' => NULL,
       ),
     ),
@@ -157,6 +167,15 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       $this->_createSkyboxType();
       $this->_patchMediaAssets();
 
+   }
+
+   public function hookUpgrade()
+   {
+     $db = $this->_db;
+     $updateViewerTable = "
+      ALTER TABLE `{$db->prefix}three_js_viewers` ADD `three_thumbnail_id` int(20) COLLATE utf8_unicode_ci
+     ";
+     $db->query($updateViewerTable);
    }
 
    public function hookUninstall()

@@ -35,6 +35,15 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
       }
     }
 
+    protected function _loadThumbnail($thumbnailId, $itemId) {
+      $thumbnailFileRecord = get_record_by_id('File', $thumbnailId);
+      if ($thumbnailFileRecord) {
+        return $thumbnailFileRecord->getWebPath('square_thumbnail');
+      } else {
+        throw new Exception('Three file record parent item is not public! To fix this, you can make item ' . $itemId . ' public.');
+      }
+    }
+
     public function getRepresentation(Omeka_Record_AbstractRecord $record)
     {
         if ($record->skybox_id !== -1) {
@@ -53,6 +62,12 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
           $threeFile = array('error' => $error->getMessage(), 'status' => 500);
         }
 
+        try {
+          $threeThumb = $this->_loadThumbnail($record->three_thumbnail_id, $record->item_id);
+        } catch (Exception $error) {
+          $threeThumb = array('error' => $error->getMessage(), 'status' => 500);
+        }
+
         // Return a PHP array, representing the passed record.
         $representation = array(
           'id' => $record->id,
@@ -60,6 +75,7 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
           'item_id' => $record->item_id,
           'item_show_url' => absolute_url('items/show/' . $record->item_id),
           'three_file' => $threeFile,
+          'three_thumbnail' => $threeThumb,
           'skybox' => $skybox,
           'enable_lights' => $record->enable_lights,
           'enable_materials' => $record->enable_materials,
@@ -76,6 +92,7 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
         // Set properties directly to a new record.
         $record->item_id = $data->item_id;
         $record->three_file_id = $data->three_file_id;
+        $record->three_thumbnail_id = $data->three_thumbnail_id;
         $record->skybox_id = $data->skybox_id;
         $record->enable_lights = $data->enable_lights;
         $record->enable_materials = $data->enable_materials;
@@ -97,6 +114,7 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
             $current = get_record_by_id('File', $record->three_file_id);
             $record->three_file_id = $data->three_file_id;
           }
+          $record->three_thumbnail_id = $data->three_thumbnail_id;
           $record->item_id = $data->item_id;
           $record->skybox_id = $data->skybox_id;
           $record->enable_lights = $data->enable_lights;

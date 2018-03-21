@@ -5,6 +5,7 @@ class ThreeJSViewer extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
   public $id;
   public $item_id;
   public $three_file_id;
+  public $three_thumbnail_id;
   public $skybox_id;
   public $enable_measurement;
   public $enable_shaders;

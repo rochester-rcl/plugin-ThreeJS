@@ -34,7 +34,7 @@ echo $this->partial('common/header-three.php', array('pageTitle' => 'browse'));
       <span class="item-flexbox-record-title"><?php echo $itemTitle ?></span>
       <a class="item-flexbox-record-link" href="<?php echo $itemURL; ?>">
         <div class="item-img">
-            <?php echo three_lazy_load_image('square_thumbnail', $item); ?>
+            <?php echo three_lazy_load_image('square_thumbnail', $item->_viewer_id); ?>
         </div>
       </a>
   </div><!-- end class="item hentry" -->

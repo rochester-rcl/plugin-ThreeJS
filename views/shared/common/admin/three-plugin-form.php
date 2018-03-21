@@ -1,5 +1,6 @@
 <?php
   $fileOptions = $this->formOptions['fileOptions'];
+  $imageUploadOptions = $this->formOptions['imageUploadOptions'];
   $toolOptions = $this->formOptions['toolOptions'];
   $viewerOptions = $this->formOptions['viewerOptions'];
 ?>
@@ -8,6 +9,9 @@
     <div id="three-viewer-form">
       <label for=<?=key($fileOptions)?>><?=$fileOptions['three-file-input']['label']?></label>
       <input class="three-form-input" type="file" name="three-file-input" id="three-file-input">
+      <br />
+      <label for=<?=key($imageUploadOptions)?>><?=$imageUploadOptions['three-image-input']['label']?></label>
+      <input class="three-form-input" type="file" name="three-image-input" id="three-file-input">
       <fieldset class="three-options-fieldset">
           <h4>Tool Options</h4>
           <?php foreach($toolOptions as $key => $toolOption): ?>
