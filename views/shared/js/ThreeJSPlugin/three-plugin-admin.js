@@ -233,7 +233,7 @@ function addThreeViewer(itemId, fileEndpoint, saveEndpoint, action) {
     var imgFile = fileData.threeThumb;
     sendFile(fileEndpoint, threeFile, function(modelFile) {
       sendFile(fileEndpoint, imgFile, function(thumbFile) {
-        saveViewer(saveEndpoint, threeFile, thumbFile, formData);
+        saveViewer(saveEndpoint, modelFile, thumbFile, formData);
       });
     });
   }

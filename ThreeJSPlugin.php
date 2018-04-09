@@ -352,7 +352,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
      foreach($newOptions as $key => $group) {
        $newOptions[$key] = array_map(function($option) use (&$viewer) {
          $prop = $option['model_prop'];
-         if ($prop === 'three_file_id') {
+         if ($prop === 'three_file_id' || $prop === 'three_thumbnail_id') {
            $file = get_record_by_id('File', $viewer[$prop]);
            if ($file) {
              $option['label'] = 'Current attached file is ' . $file->original_filename;
