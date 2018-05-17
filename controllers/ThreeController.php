@@ -14,5 +14,10 @@ class ThreeJS_ThreeController extends Omeka_Controller_AbstractActionController
     $this->view->assign(array('items' => $items, 'total_results' => $total,
       'browseTitle' => '3D Scans'));
   }
+
+  public function fullscreenAction()
+  {
+    
+  }
 }
 ?>

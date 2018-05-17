@@ -212,8 +212,12 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
     $threeBrowseRoute = new Zend_Controller_Router_Route('three-browse',
       array('module' => 'three-js', 'controller' => 'three', 'action' => 'browse')
     );
+    $threeFullScreenRoute = new Zend_Controller_Router_Route('three-embed/*',
+      array('module' => 'three-js', 'controller' => 'three', 'action' => 'fullscreen')
+    );
     $router->addRoute('three', $threeRoute);
     $router->addRoute('three-browse', $threeBrowseRoute);
+    $router->addRoute('three-embed', $threeFullScreenRoute);
     return $router;
    }
 

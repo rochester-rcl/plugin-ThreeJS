@@ -11,6 +11,10 @@ body {
 	font-family: inherit !important;
 }
 
+#root.viewer-embed {
+	height: 100vh;
+}
+
 #three-fullpage-container {
 	position: relative;
 	width: 100%;
