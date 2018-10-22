@@ -10,6 +10,8 @@ Clone this repository into your plugins directory
 
 `git clone https://github.com/rochester-rcl/plugin-ThreeJS.git ThreeJS`
 
+or download one of the releases, unzip it to your plugins directory, and rename it to ThreeJS.
+
 Install it like you would install any other Omeka plugin.
 
 ## Configuring the Plugin
