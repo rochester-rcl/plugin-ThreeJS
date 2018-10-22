@@ -53,6 +53,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
   );
 
   protected $_filters = array(
+    'public_navigation_main',
     'admin_items_form_tabs',
     'api_resources',
     'file_ingest_validators',
@@ -152,6 +153,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `item_id` int(20) COLLATE utf8_unicode_ci NOT NULL,
       `three_file_id` int(20) COLLATE utf8_unicode_ci NOT NULL,
+      `three_thumbnail_id` int(20) COLLATE utf8_unicode_ci,
       `model_units` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
       `skybox_id` int(20) COLLATE utf8_unicode_ci,
       `enable_measurement` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
@@ -294,6 +296,15 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       $viewerRecord = get_record_by_id('ThreeJSViewer', $viewer->id);
       $viewerRecord->delete();
     }
+   }
+
+   public function filterPublicNavigationMain($nav)
+   {
+     $nav[] = array(
+       'label' => __('Browse Meshes'),
+       'uri' => url('three-browse'),
+     );
+     return $nav;
    }
 
    public function filterAdminItemsFormTabs($tabs, $args)
