@@ -1,9 +1,9 @@
 # Integrates a three.js Viewer Into Your Omeka Project
 A 3D viewer geared towards cultural heritage collections. Includes tools for measurement, dynamic lighting, interactive shaders and materials settings.
 
-Currently supports [OBJ + MTL](https://en.wikipedia.org/wiki/Wavefront_.obj_file) files and a variety of texture formats (no EXR yet, sorry), as well as [PTM](http://www.hpl.hp.com/research/ptm/downloads/PtmFormat12.pdf) files for projects doing [Reflectance Transformation Imaging](http://culturalheritageimaging.org/Technologies/RTI/). Support for more formats is planned for the future.
+Currently supports [OBJ + MTL](https://en.wikipedia.org/wiki/Wavefront_.obj_file) files and a variety of texture formats (see supported formats table), as well as [PTM](http://www.hpl.hp.com/research/ptm/downloads/PtmFormat12.pdf) files for projects doing [Reflectance Transformation Imaging](http://culturalheritageimaging.org/Technologies/RTI/). Support for more formats is planned for the future.
 
-Still in active development, but it's been tested and should work &#8482;.
+Still in active development.
 
 ## Installation
 Clone this repository into your plugins directory
@@ -80,17 +80,6 @@ From there, you can upload your converted file (.js or .gz extensions only), and
 
 ![ThreeJSViewer form](doc/images/mesh-edit-form.png)
 
-## Viewing your Meshes
-
-The plugin adds three different routes to your Omeka site.
-
-* *(my-site-url)/three-browse* - the path to the browse view, which shows all of the site's meshes. A link to this view is added to your site's navigation by default (you can turn it off in the plugin's configuration).
-
-* *(my-site-url)/three/:id* - the path to view individual meshes. The *id* parameter is the id assigned by the plugin, not the item id.
-
-* *(my-site-url)/three-embed/:id* - the path to an embeddable view that removes the site's header and footer.
-
-
 ##### ThreeJSViewer Options
 
 | Option                   | Description                                                                                                                                                                                                                                                            |
@@ -103,6 +92,17 @@ The plugin adds three different routes to your Omeka site.
 | Units                    | The original unit of measurement the object was captured / scaled to. Please see the MeshLab tutorial ["Scaling to Real Measures"](https://www.youtube.com/watch?v=6psAppbOOXM) for more info.                                                                         |
 
 Once you've selected all of your options, simply click the "Add" button and save your changes.
+
+## Viewing your Meshes
+
+The plugin adds three different routes to your Omeka site.
+
+* *(my-site-url)/three-browse* - the path to the browse view, which shows all of the site's meshes. A link to this view is added to your site's navigation by default (you can turn it off in the plugin's configuration).
+
+* *(my-site-url)/three/:id* - the path to view individual meshes. The *id* parameter is the id assigned by the plugin, not the item id.
+
+* *(my-site-url)/three-embed/:id* - the path to an embeddable view that removes the site's header and footer.
+
 
 ## Other Featues
 
