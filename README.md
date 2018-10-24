@@ -5,7 +5,7 @@ Currently supports [OBJ + MTL](https://en.wikipedia.org/wiki/Wavefront_.obj_file
 
 Still in active development.
 
-## Installation
+## Installing the Plugin
 Clone this repository into your plugins directory
 
 `git clone https://github.com/rochester-rcl/plugin-ThreeJS.git ThreeJS`
@@ -20,7 +20,7 @@ Once installation has completed, there will be a new link added to your site's p
 
 There is currently only one global configuration option for the plugin, *Browse Template Description*, which provides a textbox so an optional description can be added to the top of the browse view.
 
-## Usage
+## Preparing the Meshes
 To prepare a file for upload, you can use one of our conversion tools:
 
 For [OBJ + MTL meshes](http://dslab.digitalscholar.rochester.edu/threejs-tools/converter)
@@ -29,7 +29,7 @@ For [PTM files](http://dslab.digitalscholar.rochester.edu/threejs-tools/ptm-conv
 
 The output of the conversion process is a single JSON file with all geometries, textures, and materials embedded. For more information see the [three.js wiki](https://github.com/mrdoob/three.js/wiki/JSON-Geometry-format-4).
 ##### NOTE
-These are browser-based conversion tools, so performance is based on the machine they're being run on. Chrome is recommended. They will also be bundled with the next release of the plugin once a few more features are added.
+These are browser-based conversion tools, so performance is based on the machine they're being run on. Chrome is recommended. The conversion tools will also be bundled with the next release of the plugin once a few more features are added.
 
 ### Preparing Meshes
 ![Mesh Converter Screen](doc/images/mesh-converter.png)
@@ -39,7 +39,7 @@ Mesh -- the mesh input files (OBJ and MTL)
 
 Maps -- where you can upload all of your PBR maps. [Click here](https://threejs.org/docs/#api/en/materials/MeshStandardMaterial) for the full details on supported maps
 
-##### Mesh Converter Options
+### Mesh Converter Options
 
 | Option                           | Description                                                                                                                       |
 |----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
@@ -52,7 +52,7 @@ Once you run the conversion (which may be quite slow depending on the options se
 
 ![Conversion Output Screen](doc/images/conversion-complete.png)
 
-##### PTM Converter Instructions
+### PTM Converter Instructions
 
 The PTM converter works pretty much the same as the above, with the exception of some post-processing options.
 
@@ -61,7 +61,6 @@ The PTM converter works pretty much the same as the above, with the exception of
 | Option                           | Description                                                                                                                                                |
 |----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Mesh from Surface Normals | Attempts to estimate depth from the surface normals extracted from the PTM. Produces a surface reconstruction as opposed to a flat plane. Results may vary |
-| Smooth Normal Map                | Sometimes the normals from this process are noisy. This option applies a median filter to smooth out the normal map                                        |
 | Use JPEG Compression ...         | Any maps > 2048x2048 are transcoded to jpegs regardless of their original format                                                                           |
 | Use zlib Compression ...         | Compresses the mesh and texture data using the deflate algorithm. Results in a .gz file. If unchecked, the output is a JSON file                           |
 
@@ -72,13 +71,11 @@ The PTM converter works pretty much the same as the above, with the exception of
 Some optimization attempts have been made with the conversion tools, and all processing is done in Web Workers wherever possible, but you may run into memory issues if you attempt to create normal maps from very large textures (>=8192x8192) on a below-average machine. Similarly, you may run into issues with very large PTM files (>300MB), and processing may take a few minutes.
 
 ## Adding a Mesh to an Omeka Item
-Once you have converted your mesh, add a new item to your project. * The item must be saved before you can add a mesh to it. * Once the item has been saved, edit the item and navigate to the "ThreeJSViewer" tab.
-
-![ThreeJSViewer tab](doc/images/edit-nav.png)
-
-From there, you can upload your converted file (.js or .gz extensions only), and select any relevant options.
+Once you have converted your mesh, add a new item to your project. * The item must be saved before you can add a mesh to it. * Once the item has been saved, edit the item and navigate to the ThreeJSViewer tab.
 
 ![ThreeJSViewer form](doc/images/mesh-edit-form.png)
+
+From there, you can upload your converted file (.js or .gz extensions only), and select any relevant options.
 
 ##### ThreeJSViewer Options
 
