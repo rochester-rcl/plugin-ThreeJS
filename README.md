@@ -103,7 +103,7 @@ The plugin adds three different routes to your Omeka site.
 
 ## Other Featues
 
-##### Creating Skyboxes
+### Creating Skyboxes
 
 ![Skybox Example](doc/images/skybox.jpg)
 
@@ -117,3 +117,20 @@ There are currently two options for skyboxes:
 * An image can be attached to the skybox item in the same way you add images to items. Currently, the plugin only supports single images with equirectangular (spherical) projection.
 
 * If you prefer a skybox with a radial gradient you can enter the inner color and outer color (hex or rgb) as metadata fields. Note, if there's both a file and a gradient, files will always take precedence.
+
+## Supported Formats
+
+Mesh Import Formats (Conversion Tools Only)
+- [x] OBJ / MTL
+- [ ] FBX
+- [ ] COLLADA
+- [ ] STL
+- [ ] PLY
+
+Texture Import Formats
+- [x] JPEG
+- [x] PNG (RGB and RGBA)
+- [x] TIFF (Not recommended)
+- [x] WebP (Chrome and Edge)
+- [ ] EXR
+- [ ] DDS
