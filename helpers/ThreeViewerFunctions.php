@@ -98,12 +98,9 @@ function get_skybox_options($itemTypeId) {
 function load_react_css($dryRun)
 {
   $iterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator(THREE_BUNDLE_DIR, RecursiveDirectoryIterator::SKIP_DOTS),
+    new RecursiveDirectoryIterator(THREE_BUNDLE_STATIC_CSS_DIR, RecursiveDirectoryIterator::SKIP_DOTS),
     RecursiveIteratorIterator::SELF_FIRST
   );
-
-  $files = [];
-
   foreach($iterator as $path => $dir) {
     if ($dir->isFile()) {
       $file = $dir;
@@ -119,25 +116,29 @@ function load_react_css($dryRun)
   }
 }
 
-
-
 // bundle has uuids and will break all of the relationships if we change the name
-function load_js_bundle()
+// TODO get ALL of the js files
+function load_js_bundle($systemPath=false)
 {
+  $bundle = [];
   $iterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator(THREE_BUNDLE_DIR, RecursiveDirectoryIterator::SKIP_DOTS),
+    new RecursiveDirectoryIterator(THREE_BUNDLE_STATIC_JS_DIR, RecursiveDirectoryIterator::SKIP_DOTS),
     RecursiveIteratorIterator::SELF_FIRST
   );
-
-  $files = [];
 
   foreach($iterator as $path => $dir) {
     if ($dir->isFile()) {
       $file = $dir;
       $ext = $file->getExtension();
       if ($ext === 'js') {
-        return absolute_url(THREE_BUNDLE_STATIC_JS_URL . $file->getBasename());
+        if ($systemPath === TRUE) {
+          $path = $file->getRealPath();
+        } else {
+          $path = absolute_url(THREE_BUNDLE_STATIC_JS_URL . $file->getBasename());
+        }
+        array_push($bundle, $path);
       }
     }
   }
+  return $bundle;
 }

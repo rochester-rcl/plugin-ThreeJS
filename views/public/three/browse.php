@@ -27,7 +27,7 @@ echo $this->partial('common/header-three.php', array('pageTitle' => 'browse'));
 <div class="item-records" id="item-records-block">
 <?php foreach (loop('items') as $item): ?>
 <?php $itemTitle = metadata('item', array('Dublin Core', 'Title'));
-      $itemURL = url('three/' . $item->_viewer_id);
+      $itemURL = url('three/models/' . $item->_viewer_id);
  ?>
  <?php if (metadata('item', 'has files')): ?>
   <div class="item-flexbox-record">

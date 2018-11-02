@@ -77,11 +77,12 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
           'three_file' => $threeFile,
           'three_thumbnail' => $threeThumb,
           'skybox' => $skybox,
-          'enable_lights' => $record->enable_lights,
+          'enable_light' => $record->enable_lights,
           'enable_materials' => $record->enable_materials,
           'enable_shaders' => $record->enable_shaders,
           'enable_measurement' => $record->enable_measurement,
           'model_units' => $record->model_units,
+          'viewer_settings' => json_decode($record->viewer_settings),
         );
         return $representation;
     }
@@ -108,6 +109,8 @@ class Api_ThreeJSViewer extends Omeka_Record_Api_AbstractRecordAdapter
         if ($data->needs_delete) {
           // Don't care about setting anything else as this will be deleted on the next after_save_record hook
           $record->needs_delete = $data->needs_delete;
+        } elseif ($data->viewer_settings) {
+          $record->viewer_settings = json_encode($data->viewer_settings);
         } else {
           // Set properties directly to an existing record.
           if ($data->three_file_id) {

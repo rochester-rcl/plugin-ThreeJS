@@ -15,7 +15,10 @@
 require_once dirname(__FILE__) . '/helpers/ThreeViewerFunctions.php';
 $appRoot = getcwd();
 define('THREE_VIEWER_ROOT', dirname(__FILE__));
-define('THREE_BUNDLE_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build');
+define('THREE_BUNDLE_STATIC_JS_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build/static/js');
+define('THREE_BUNDLE_STATIC_CSS_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build/static/css');
+define('THREE_BUNDLE_WORKER_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build');
+define('THREE_BUNDLE_WORKER_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/');
 define('THREE_BUNDLE_STATIC_JS_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/js/');
 define('THREE_FALLBACK_IMG_URL', 'plugins/' . basename(__DIR__) . '/views/shared/common/images/fallback.png');
 define('THREE_BUNDLE_STATIC_MEDIA_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/media/');
@@ -161,6 +164,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       `enable_materials` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       `enable_lights` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       `needs_delete` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
+      `viewer_settings` JSON,
       PRIMARY KEY (`id`)
       ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
 
@@ -175,9 +179,12 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
    {
      $db = $this->_db;
      $updateViewerTable = "
-      ALTER TABLE `{$db->prefix}three_js_viewers` ADD `three_thumbnail_id` int(20) COLLATE utf8_unicode_ci
+      ALTER TABLE `{$db->prefix}three_js_viewers` ADD `viewer_settings` JSON
      ";
      $db->query($updateViewerTable);
+     // in case js build was upgraded
+     $this->_patchMediaAssets();
+     // $this->_patchWorkers();
    }
 
    public function hookUninstall()
@@ -497,6 +504,16 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
      $cssString = file_get_contents($css);
      $res = str_replace('url(/static/media/', 'url(' . public_url(THREE_BUNDLE_STATIC_MEDIA_URL), $cssString);
      file_put_contents($css, $res);
+   }
+
+   protected function _patchWorkers()
+   {
+     $bundle = load_js_bundle(TRUE);
+     foreach($bundle as $jsFile) {
+       $jsString = file_get_contents($jsFile);
+       $res = preg_replace('/Worker\((.*)\+/g', 'Worker(' . THREE_BUNDLE_WORER_URL . '+', $jsString);
+       file_put_contents($jsFile, $res);
+     }
    }
 
 }
