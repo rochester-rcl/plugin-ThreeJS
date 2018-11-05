@@ -17,12 +17,20 @@ $appRoot = getcwd();
 define('THREE_VIEWER_ROOT', dirname(__FILE__));
 define('THREE_BUNDLE_STATIC_JS_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build/static/js');
 define('THREE_BUNDLE_STATIC_CSS_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build/static/css');
+define('THREE_BUNDLE_STATIC_MEDIA_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build/static/media');
 define('THREE_BUNDLE_WORKER_DIR', THREE_VIEWER_ROOT . '/views/shared/js/ThreeJSPlugin/build');
 define('THREE_BUNDLE_WORKER_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/');
 define('THREE_BUNDLE_STATIC_JS_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/js/');
 define('THREE_FALLBACK_IMG_URL', 'plugins/' . basename(__DIR__) . '/views/shared/common/images/fallback.png');
 define('THREE_BUNDLE_STATIC_MEDIA_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/media/');
 define('THREE_BUNDLE_STATIC_CSS', 'js/ThreeJSPlugin/build/static/css');
+define('THREE_BUNDLE_FONT_TYPES', [
+  'eot' => 'embedded-opentype',
+  'woff2' => 'woff2',
+  'woff' => 'woff',
+  'ttf' => 'truetype',
+  'svg' => 'svg'
+]);
 
 class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -171,7 +179,8 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       $db->query($initViewers);
       $this->_installOptions();
       $this->_createSkyboxType();
-      $this->_patchMediaAssets();
+      // Loading fonts dynamically now so we don't need this
+      // $this->_patchMediaAssets();
 
    }
 
@@ -190,7 +199,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 
      $db->query($updateViewerTable);
      // in case js build was upgraded
-     $this->_patchMediaAssets();
+     // $this->_patchMediaAssets();
    }
 
    public function hookUninstall()

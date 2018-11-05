@@ -116,6 +116,32 @@ function load_react_css($dryRun)
   }
 }
 
+function load_react_fonts()
+{
+  $iterator = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator(THREE_BUNDLE_STATIC_MEDIA_DIR, RecursiveDirectoryIterator::SKIP_DOTS),
+    RecursiveIteratorIterator::SELF_FIRST
+  );
+  $fonts = [];
+  foreach($iterator as $path => $dir) {
+    if ($dir->isFile()) {
+      $file = $dir;
+      $basename = $file->getBasename();
+      $prefix = explode($basename)[0];
+      $ext = $file->getExtension();
+      $format = THREE_BUNDLE_FONT_TYPES[$ext];
+      $path = absolute_url(THREE_BUNDLE_STATIC_MEDIA_URL . $basename);
+      $info = ['format' => $format, 'path' => $path];
+      if (!array_key_exists($prefix, $fonts)) {
+        $fonts[$prefix] = [$info];
+      } else {
+        array_push($fonts[$prefix], $info);
+      }
+    }
+  }
+  return $fonts;
+}
+
 // bundle has uuids and will break all of the relationships if we change the name
 // TODO get ALL of the js files
 function load_js_bundle($systemPath=false)
