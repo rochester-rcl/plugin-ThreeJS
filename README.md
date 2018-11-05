@@ -12,13 +12,23 @@ Clone this repository into your plugins directory
 
 or download one of the releases, unzip it to your plugins directory, and rename it to ThreeJS.
 
-Install it like you would install any other Omeka plugin.
+Install it like you would install any other Omeka plugin. To enable the API
 
 ## Configuring the Plugin
 
 Once installation has completed, there will be a new link added to your site's public navigation called *Browse Meshes*, you can change the name of the link (or hide it) the same way you would for any other menu item.
 
 There is currently only one global configuration option for the plugin, *Browse Template Description*, which provides a textbox so an optional description can be added to the top of the browse view.
+
+This plugin uses the Omeka API. In order to use the plugin, the API must be enabled. To enable the API, select the API tab from the settings menu:
+
+![API Settings Page](doc/images/api-page.png)
+
+You will also have to generate API keys for any admin user who will be adding files to the system. To provide API credentials for a given user, edit the user from the *Users* tab on the admin bar. From there, select *API* keys and provide **"three"** as the label.
+
+![API Keys Page](doc/images/api-keys.png)
+
+Finally, select *Update API Keys* and the user will now be able to upload models and save settings.
 
 ## Preparing the Meshes
 To prepare a file for upload, you can use one of our conversion tools:
