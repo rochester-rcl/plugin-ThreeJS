@@ -33,13 +33,13 @@ Finally, select *Update API Keys* and the user will now be able to upload models
 ## Preparing the Meshes
 To prepare a file for upload, you can use one of our conversion tools:
 
-For [OBJ + MTL meshes](http://dslab.digitalscholar.rochester.edu/threejs-tools/converter)
+For [OBJ + MTL meshes](http://resurrect3d.lib.rochester.edu/converter)
 
-For [PTM files](http://dslab.digitalscholar.rochester.edu/threejs-tools/ptm-converter)
+For [PTM files](http://resurrect3d.lib.rochester.edu/ptm-converter)
 
 The output of the conversion process is a single JSON file with all geometries, textures, and materials embedded. For more information see the [three.js wiki](https://github.com/mrdoob/three.js/wiki/JSON-Geometry-format-4).
 ##### NOTE
-These are browser-based conversion tools, so performance is based on the machine they're being run on. Chrome is recommended. The conversion tools will also be bundled with the next release of the plugin once a few more features are added.
+These are browser-based conversion tools, so performance is based on the machine they're being run on. Chrome is recommended. The conversion tools are also bundled with the plugin, and can be found at *mysite.com/three/converter* and *mysite.com/three/ptm-converter* respectively.
 
 ### Preparing Meshes
 ![Mesh Converter Screen](doc/images/mesh-converter.png)
