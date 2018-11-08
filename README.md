@@ -106,7 +106,7 @@ The plugin adds three different routes to your Omeka site.
 
 * *(my-site-url)/three-browse* - the path to the browse view, which shows all of the site's meshes. A link to this view is added to your site's navigation by default (you can turn it off in the plugin's configuration).
 
-* *(my-site-url)/three/models/:id* - the path to view individual meshes. The *id* parameter is the id assigned by the plugin, not the item id. This path also accepts an "embed" query parameter. If true, the result will be an embeddable view without the site's header and footer. For example, *(my-site-url)/three/models/:id?query=true* will yield an embeddable view. 
+* *(my-site-url)/three/models/:id* - the path to view individual meshes. The *id* parameter is the id assigned by the plugin, not the item id. This path also accepts an "embed" query parameter. If true, the result will be an embeddable view without the site's header and footer. For example, *(my-site-url)/three/models/:id?embed=true* will yield an embeddable view. 
 
 * *(my-site-url)/three-embed/:id* - the path to an embeddable view that removes the site's header and footer.
 
