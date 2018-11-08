@@ -1,5 +1,10 @@
 <?php
-  echo $this->partial('common/header-three.php');
+  if ($this->fullscreen) {
+    $header = $this->partial('common/header-three-fullscreen.php');
+  } else {
+    $header = $this->partial('common/header-three.php');
+  }
+  echo $header;
   $apiKey = js_escape(get_user_api_key());
   $publicUrl = js_escape(url('') . 'three');
   $root = js_escape(url('/'));
@@ -25,4 +30,8 @@
 <?php foreach(load_js_bundle() as $jsFile): ?>
   <script type="text/javascript" src=<?=$jsFile?>></script>
 <?php endforeach; ?>
-<?php echo foot(); ?>
+<?php
+  if (!$this->fullscreen) {
+    echo foot();
+  }
+?>

@@ -29,6 +29,17 @@
     }
     echo head_css();
     ?>
+    <style>
+      <?php foreach(load_react_fonts() as $family => $fonts): ?>
+        @font-face {
+          font-family: <?=$family?>;
+          src:
+          <?php foreach($fonts as $font): ?>
+            url(<?=$font['path']?>) format(<?$font['format']?>);
+          <?php endforeach; ?>
+        }
+      <?php endforeach; ?>
+    </style>
     <?php
       queue_js_url("https://use.fontawesome.com/aadd731529.js");
     ?>
