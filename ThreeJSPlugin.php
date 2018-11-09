@@ -30,7 +30,7 @@ const THREE_BUNDLE_FONT_TYPES = [
   'woff' => 'woff',
   'ttf' => 'truetype',
   'svg' => 'svg'
-]);
+];
 
 class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
 {
