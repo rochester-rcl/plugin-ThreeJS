@@ -4,6 +4,7 @@
   height: 100vh;
   width: 100%;
   overflow-y: scroll;
+  font-family: "Source Code Pro", sans-serif;
 }
 .item-records {
 	justify-content: center;
