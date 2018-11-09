@@ -24,7 +24,7 @@ define('THREE_BUNDLE_STATIC_JS_URL', 'plugins/' . basename(__DIR__) . '/views/sh
 define('THREE_FALLBACK_IMG_URL', 'plugins/' . basename(__DIR__) . '/views/shared/common/images/fallback.png');
 define('THREE_BUNDLE_STATIC_MEDIA_URL', 'plugins/' . basename(__DIR__) . '/views/shared/js/ThreeJSPlugin/build/static/media/');
 define('THREE_BUNDLE_STATIC_CSS', 'js/ThreeJSPlugin/build/static/css');
-define('THREE_BUNDLE_FONT_TYPES', [
+const THREE_BUNDLE_FONT_TYPES = [
   'eot' => 'embedded-opentype',
   'woff2' => 'woff2',
   'woff' => 'woff',
@@ -172,7 +172,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
       `enable_materials` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       `enable_lights` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
       `needs_delete` tinyint(1) COLLATE utf8_unicode_ci NOT NULL,
-      `viewer_settings` JSON,
+      `viewer_settings` LONGTEXT,
       PRIMARY KEY (`id`)
       ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
 
@@ -189,11 +189,11 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
      $db = $this->_db;
      if ($info["old_version"] === "0.0.1") {
        $updateViewerTable = "
-        ALTER TABLE `{$db->prefix}three_js_viewers` ADD COLUMN `three_thumbnail_id` int(20) COLLATE utf8_unicode_ci, ADD COLUMN `viewer_settings` JSON
+        ALTER TABLE `{$db->prefix}three_js_viewers` ADD COLUMN `three_thumbnail_id` int(20) COLLATE utf8_unicode_ci, ADD COLUMN `viewer_settings` LONGTEXT
        ";
      } else {
        $updateViewerTable = "
-        ALTER TABLE `{$db->prefix}three_js_viewers` ADD COLUMN `viewer_settings` JSON
+        ALTER TABLE `{$db->prefix}three_js_viewers` ADD COLUMN `viewer_settings` LONGTEXT
        ";
      }
 

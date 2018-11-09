@@ -22,7 +22,7 @@
     <?php
     queue_css_file('three-viewer-header');
     queue_css_file('three-viewer');
-    queue_css_file(array('iconfonts', 'skeleton','style'));
+    queue_css_file(array('iconfonts', 'skeleton'));
     load_react_css(FALSE);
     if ($this->pageTitle === 'browse') {
       queue_css_file('three-viewer-browse');

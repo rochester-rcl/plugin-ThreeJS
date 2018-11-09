@@ -127,7 +127,7 @@ function load_react_fonts()
     if ($dir->isFile()) {
       $file = $dir;
       $basename = $file->getBasename();
-      $prefix = explode($basename)[0];
+      $prefix = explode('/', $basename)[0];
       $ext = $file->getExtension();
       $format = THREE_BUNDLE_FONT_TYPES[$ext];
       $path = absolute_url(THREE_BUNDLE_STATIC_MEDIA_URL . $basename);

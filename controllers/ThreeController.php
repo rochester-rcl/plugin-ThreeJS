@@ -5,6 +5,7 @@ class ThreeJS_ThreeController extends Omeka_Controller_AbstractActionController
   public function showAction()
   {
     $fullscreen = $this->getParam('embed');
+    $this->view->isThreeView = true;
     $this->view->fullscreen = ($fullscreen === 'true' ? true : false);
   }
 
