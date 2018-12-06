@@ -191,13 +191,15 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
        $updateViewerTable = "
         ALTER TABLE `{$db->prefix}three_js_viewers` ADD COLUMN `three_thumbnail_id` int(20) COLLATE utf8_unicode_ci, ADD COLUMN `viewer_settings` LONGTEXT
        ";
-     } else {
+       $db->query($updateViewerTable);
+     } else if ($info["old_version"] < "0.0.3") {
        $updateViewerTable = "
         ALTER TABLE `{$db->prefix}three_js_viewers` ADD COLUMN `viewer_settings` LONGTEXT
        ";
+       $db->query($updateViewerTable);
      }
 
-     $db->query($updateViewerTable);
+
      // in case js build was upgraded
      // $this->_patchMediaAssets();
    }
