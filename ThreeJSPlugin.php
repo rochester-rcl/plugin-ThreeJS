@@ -45,6 +45,7 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
     'config_form',
     'config',
     'items_browse_sql',
+    'public_items_show',
     'define_routes',
     'define_acl',
     'admin_head',
@@ -274,6 +275,54 @@ class ThreeJSPlugin extends Omeka_Plugin_AbstractPlugin
        $select->where("item_type_id != ? OR item_type_id IS NULL", $skyboxTypeId);
      }
    }
+
+   // TODO put option in here for embedding as well
+   public function hookPublicItemsShow($data)
+   {
+      $item = $data['item'];
+      $viewer = item_has_viewer($item);
+      if ($viewer) {
+        $this->addJS($viewer);
+      }
+   }
+
+   protected function addJS($viewer)
+   {
+      $url = url("/three/models/{$viewer->id}?embed=true");
+      // TODO not working with viewer - viewer needs element-set class
+      $js = 
+        "<script>
+          try {
+
+            var elementSets = document.getElementsByClassName('element-set');
+            var elementSet = [...elementSets].slice(-1);
+            var element = document.createElement('div');
+            var elementText = document.createElement('div');
+            var elementHeader = document.createElement('h3');
+            var elementLink = document.createElement('a');
+            
+            elementLink.className = 'three-view-link';
+            element.className = 'element';
+            elementText.className = 'element-text';
+            element.id = 'three-view-metadata';
+
+            elementHeader.innerText = '3D Model';
+            elementLink.text = 'View in new tab';
+            elementLink.href = '{$url}';
+            elementLink.target = '_blank';
+
+            elementText.appendChild(elementLink);
+            element.appendChild(elementHeader);
+            element.appendChild(elementText);
+            elementSet[0].appendChild(element);
+        } catch(error) {
+          console.warn(error);
+        }
+
+         </script>
+        ";
+        echo $js;
+   } 
 
    public function hookBeforeSaveItem($args)
    {
