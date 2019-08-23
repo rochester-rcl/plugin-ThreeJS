@@ -4,7 +4,7 @@ class ThreeJS_ThreeController extends Omeka_Controller_AbstractActionController
 {
   public function showAction()
   {
-    $fullscreen = $this->getParam('embed');
+    $fullscreen = $this->_request->getQuery('embed');
     $this->view->isThreeView = true;
     $this->view->fullscreen = ($fullscreen === 'true' ? true : false);
   }
@@ -20,7 +20,7 @@ class ThreeJS_ThreeController extends Omeka_Controller_AbstractActionController
   public function fullscreenAction()
   {
     $params = $this->getRequest()->getUserParams();
-    $url = '/three/models/' . $params['models'] . '?embed=true';
+    $url = '/three/embed/' . $params['models'] . '?embed=true';
     $this->_redirect(absolute_url($url));
   }
 }

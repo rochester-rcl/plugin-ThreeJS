@@ -11,7 +11,6 @@
 ?>
 </div>
 <script type="text/javascript">
-// this needs to be in a file
   var key = <?=$apiKey?>;
   window.rootUrl = <?=$root?>;
   window.publicUrl = <?=$publicUrl?>;
